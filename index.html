@@ -5,182 +5,152 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ระบบซื้อหวยออนไลน์</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
         body {
             background-color: #f8f9fa;
-            padding: 20px;
         }
-        .winner { color: green; font-weight: bold; }
-        .loser { color: red; font-weight: bold; }
+        .container {
+            max-width: 600px;
+            margin-top: 20px;
+        }
+        .modal-content {
+            border-radius: 10px;
+        }
+        .btn-custom {
+            width: 100%;
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h2 class="text-center mb-4">ระบบซื้อหวยออนไลน์</h2>
+<div class="container text-center">
+    <h2 class="mb-4">ระบบซื้อหวยออนไลน์</h2>
+    
+    <button class="btn btn-primary btn-custom" data-bs-toggle="modal" data-bs-target="#addBuyerModal">เพิ่มผู้ซื้อ</button>
+    <button class="btn btn-success btn-custom" data-bs-toggle="modal" data-bs-target="#checkPrizeModal">ตรวจสอบรางวัล</button>
+    <button class="btn btn-danger btn-custom" onclick="clearAllData()">ล้างข้อมูลทั้งหมด</button>
 
-    <!-- ปุ่มเพิ่มผู้ซื้อ -->
-    <button class="btn btn-primary mb-3" onclick="showBuyerModal()">เพิ่มผู้ซื้อ</button>
-
-    <!-- รายการผู้ซื้อ -->
-    <h4>รายการซื้อวันนี้</h4>
+    <h4 class="mt-4">รายการซื้อวันนี้</h4>
     <ul id="buyerList" class="list-group"></ul>
+</div>
 
-    <!-- ปุ่มตรวจรางวัล -->
-    <h4 class="mt-4">ตรวจรางวัล</h4>
-    <div class="input-group mb-3">
-        <input type="text" id="prize3Digit" class="form-control" placeholder="เลข 3 ตัว">
-        <input type="text" id="prize2Digit" class="form-control" placeholder="เลข 2 ตัว">
-        <button class="btn btn-success" onclick="checkPrizes()">ตรวจสอบ</button>
-    </div>
-
-    <!-- Modal เพิ่มผู้ซื้อ -->
-    <div class="modal fade" id="buyerModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">เพิ่มผู้ซื้อ</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <input type="text" id="buyerName" class="form-control mb-2" placeholder="ชื่อผู้ซื้อ">
-                    <button class="btn btn-success" onclick="addBuyer()">บันทึก</button>
-                </div>
+<!-- Modal: เพิ่มผู้ซื้อ -->
+<div class="modal fade" id="addBuyerModal" tabindex="-1" aria-labelledby="addBuyerModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">เพิ่มผู้ซื้อหวย</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <input type="text" id="buyerName" class="form-control mb-2" placeholder="ชื่อผู้ซื้อ">
+                <button class="btn btn-primary" onclick="addPurchase()">เพิ่มรายการซื้อ</button>
+                <ul id="purchaseList" class="list-group mt-3"></ul>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-success" onclick="saveBuyer()">บันทึก</button>
             </div>
         </div>
     </div>
+</div>
 
-    <!-- Modal เพิ่มรายการหวย -->
-    <div class="modal fade" id="lotteryModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">เพิ่มรายการหวย</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <input type="hidden" id="currentBuyerId">
-                    <input type="text" id="lotteryNumber" class="form-control mb-2" placeholder="เลขที่ซื้อ">
-                    <input type="number" id="lotteryAmount" class="form-control mb-2" placeholder="จำนวนเงิน">
-                    <select id="lotteryType" class="form-control mb-2">
-                        <option value="3">สามตัว</option>
-                        <option value="2">สองตัว</option>
-                    </select>
-                    <button class="btn btn-success" onclick="addLottery()">บันทึก</button>
-                </div>
+<!-- Modal: ตรวจสอบรางวัล -->
+<div class="modal fade" id="checkPrizeModal" tabindex="-1" aria-labelledby="checkPrizeModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">ตรวจสอบรางวัล</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <input type="text" id="prize3Digit" class="form-control mb-2" placeholder="เลขสามตัว">
+                <input type="text" id="prize2Digit" class="form-control mb-2" placeholder="เลขสองตัว">
+                <button class="btn btn-primary" onclick="checkPrize()">ตรวจสอบ</button>
+                <ul id="winnerList" class="list-group mt-3"></ul>
             </div>
         </div>
     </div>
-
-    <!-- Modal รายการซื้อ -->
-    <div class="modal fade" id="lotteryListModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">รายการที่ซื้อ</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <ul id="lotteryList" class="list-group"></ul>
-                </div>
-            </div>
-        </div>
-    </div>
-
 </div>
 
 <script>
     let buyers = JSON.parse(localStorage.getItem("buyers")) || [];
 
-    function showBuyerModal() {
-        document.getElementById("buyerName").value = "";
-        new bootstrap.Modal(document.getElementById("buyerModal")).show();
-    }
-
-    function addBuyer() {
-        let name = document.getElementById("buyerName").value.trim();
-        if (!name) return alert("กรุณากรอกชื่อ");
-
-        let newBuyer = { id: Date.now(), name, lotteries: [] };
-        buyers.push(newBuyer);
-        saveData();
-        renderBuyers();
-        bootstrap.Modal.getInstance(document.getElementById("buyerModal")).hide();
-    }
-
-    function renderBuyers() {
-        let list = document.getElementById("buyerList");
-        list.innerHTML = "";
-        buyers.forEach(buyer => {
-            let li = document.createElement("li");
-            li.className = "list-group-item d-flex justify-content-between align-items-center";
-            li.innerHTML = `
-                ${buyer.name} (${buyer.lotteries.length} รายการ)
-                <div>
-                    <button class="btn btn-sm btn-primary" onclick="showLotteryModal(${buyer.id})"><i class="fas fa-plus"></i> เพิ่มหวย</button>
-                    <button class="btn btn-sm btn-info" onclick="showLotteryList(${buyer.id})"><i class="fas fa-list"></i> รายการ</button>
-                </div>
-            `;
-            list.appendChild(li);
+    function updateBuyerList() {
+        $("#buyerList").empty();
+        buyers.forEach((buyer, index) => {
+            $("#buyerList").append(`
+                <li class="list-group-item">
+                    <strong>${buyer.name}</strong> 
+                    <button class="btn btn-info btn-sm float-end" onclick="viewDetails(${index})">ดูรายละเอียด</button>
+                </li>
+            `);
         });
-    }
-
-    function showLotteryModal(buyerId) {
-        document.getElementById("currentBuyerId").value = buyerId;
-        document.getElementById("lotteryNumber").value = "";
-        document.getElementById("lotteryAmount").value = "";
-        new bootstrap.Modal(document.getElementById("lotteryModal")).show();
-    }
-
-    function addLottery() {
-        let buyerId = document.getElementById("currentBuyerId").value;
-        let number = document.getElementById("lotteryNumber").value.trim();
-        let amount = parseFloat(document.getElementById("lotteryAmount").value);
-        let type = document.getElementById("lotteryType").value;
-
-        if (!number || isNaN(amount) || amount <= 0) return alert("กรุณากรอกข้อมูลให้ถูกต้อง");
-
-        let buyer = buyers.find(b => b.id == buyerId);
-        buyer.lotteries.push({ number, amount, type });
-        saveData();
-        renderBuyers();
-        bootstrap.Modal.getInstance(document.getElementById("lotteryModal")).hide();
-    }
-
-    function showLotteryList(buyerId) {
-        let buyer = buyers.find(b => b.id == buyerId);
-        let list = document.getElementById("lotteryList");
-        list.innerHTML = "";
-
-        buyer.lotteries.forEach((lottery, index) => {
-            let li = document.createElement("li");
-            li.className = "list-group-item d-flex justify-content-between";
-            li.innerHTML = `
-                ${lottery.number} (${lottery.type == "3" ? "สามตัว" : "สองตัว"}) - ${lottery.amount} บาท
-                <button class="btn btn-sm btn-danger" onclick="deleteLottery(${buyerId}, ${index})"><i class="fas fa-trash"></i></button>
-            `;
-            list.appendChild(li);
-        });
-
-        new bootstrap.Modal(document.getElementById("lotteryListModal")).show();
-    }
-
-    function deleteLottery(buyerId, index) {
-        let buyer = buyers.find(b => b.id == buyerId);
-        buyer.lotteries.splice(index, 1);
-        saveData();
-        showLotteryList(buyerId);
-    }
-
-    function saveData() {
         localStorage.setItem("buyers", JSON.stringify(buyers));
     }
 
-    window.onload = renderBuyers;
-</script>
+    function addPurchase() {
+        const number = prompt("ระบุหมายเลขที่ซื้อ (2 หรือ 3 หลัก)");
+        const amount = prompt("จำนวนเงินที่ซื้อ");
+        if (!number || !amount || isNaN(amount)) return;
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        $("#purchaseList").append(`
+            <li class="list-group-item">${number} - ${amount} บาท</li>
+        `);
+    }
+
+    function saveBuyer() {
+        const name = $("#buyerName").val();
+        if (!name) return alert("กรุณากรอกชื่อผู้ซื้อ");
+
+        let purchases = [];
+        $("#purchaseList li").each(function() {
+            let text = $(this).text().split(" - ");
+            purchases.push({ number: text[0], amount: parseFloat(text[1]) });
+        });
+
+        buyers.push({ name, purchases });
+        updateBuyerList();
+        $("#buyerName").val("");
+        $("#purchaseList").empty();
+        $("#addBuyerModal").modal("hide");
+    }
+
+    function viewDetails(index) {
+        let buyer = buyers[index];
+        let detail = buyer.purchases.map(p => `${p.number} - ${p.amount} บาท`).join("\n");
+        alert(`ชื่อ: ${buyer.name}\n\n${detail}`);
+    }
+
+    function checkPrize() {
+        let prize3 = $("#prize3Digit").val();
+        let prize2 = $("#prize2Digit").val();
+        $("#winnerList").empty();
+
+        buyers.forEach(buyer => {
+            buyer.purchases.forEach(purchase => {
+                if (purchase.number === prize3 || purchase.number === prize2) {
+                    let reward = purchase.number.length === 3 ? purchase.amount * 1000 : purchase.amount * 100;
+                    $("#winnerList").append(`
+                        <li class="list-group-item list-group-item-success">
+                            ${buyer.name} ถูกหวย ${purchase.number} ได้ ${reward} บาท
+                        </li>
+                    `);
+                }
+            });
+        });
+    }
+
+    function clearAllData() {
+        localStorage.removeItem("buyers");
+        buyers = [];
+        updateBuyerList();
+    }
+
+    $(document).ready(updateBuyerList);
+</script>
 
 </body>
 </html>
