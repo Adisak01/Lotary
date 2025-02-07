@@ -91,7 +91,7 @@
 
         function addLottery() {
             let number = prompt("กรอกเลขที่ซื้อ:");
-            let amount = prompt("จำนวนเงินที่ซื้อ:");
+            let amount = parseInt(prompt("จำนวนเงินที่ซื้อ:"), 10);
             if (number && amount) {
                 currentLotteries.push({ number, amount, time: new Date().toLocaleTimeString() });
                 renderLotteries();
@@ -151,10 +151,6 @@
             new bootstrap.Modal(document.getElementById("detailModal")).show();
         }
 
-        function openResultModal() {
-            new bootstrap.Modal(document.getElementById("resultModal")).show();
-        }
-
         function checkWinners() {
             let prize3 = document.getElementById("prize3").value;
             let prize2 = document.getElementById("prize2").value;
@@ -162,9 +158,20 @@
 
             buyers.forEach(buyer => {
                 let win = buyer.lotteries.map(l => {
-                    let icon = (l.number === prize3 || l.number === prize2) ? "✅" : "❌";
-                    return `<li class='list-group-item'>${l.number} - ${l.amount} บาท ${icon}</li>`;
+                    let prizeAmount = 0;
+                    let icon = "❌";
+
+                    if (l.number === prize3) {
+                        prizeAmount = l.amount * 1000;
+                        icon = "✅";
+                    } else if (l.number === prize2) {
+                        prizeAmount = l.amount * 100;
+                        icon = "✅";
+                    }
+
+                    return `<li class='list-group-item'>${l.number} - ${l.amount} บาท ${icon} ${prizeAmount > 0 ? `(รางวัล ${prizeAmount} บาท)` : ''}</li>`;
                 }).join("");
+
                 resultText += `<li class='list-group-item'><b>${buyer.name}</b> (${buyer.date})<ul>${win}</ul></li>`;
             });
 
@@ -183,7 +190,5 @@
 
         loadBuyers();
     </script>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
