@@ -11,19 +11,20 @@
     <div class="container mt-4">
         <h2 class="text-center">ระบบซื้อหวยออนไลน์</h2>
         <button class="btn btn-primary mb-3" onclick="openBuyerModal()">เพิ่มผู้ซื้อหวย</button>
+        <button class="btn btn-success mb-3" onclick="openResultModal()">ตรวจรางวัล</button>
         <button class="btn btn-danger mb-3" onclick="clearData()">เคลียร์ข้อมูล</button>
         
         <h4>รายการผู้ซื้อวันนี้</h4>
         <ul id="buyerList" class="list-group"></ul>
     </div>
 
-    <!-- Modal สำหรับเพิ่มผู้ซื้อ -->
-    <div class="modal fade" id="buyerModal" tabindex="-1" aria-labelledby="buyerModalLabel" aria-hidden="true">
+    <!-- Modal เพิ่มผู้ซื้อ -->
+    <div class="modal fade" id="buyerModal" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">เพิ่มผู้ซื้อหวย</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <label>ชื่อผู้ซื้อ:</label>
@@ -32,24 +33,46 @@
                     <ul id="lotteryList" class="list-group"></ul>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ปิด</button>
-                    <button type="button" class="btn btn-primary" onclick="saveBuyer()">บันทึก</button>
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">ปิด</button>
+                    <button class="btn btn-primary" onclick="saveBuyer()">บันทึก</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Modal แสดงรายละเอียดผู้ซื้อ -->
-    <div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true">
+    <!-- Modal ตรวจรางวัล -->
+    <div class="modal fade" id="resultModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">ตรวจรางวัล</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <label>เลข 3 ตัว:</label>
+                    <input type="text" id="prize3" class="form-control mb-2">
+                    <label>เลข 2 ตัว:</label>
+                    <input type="text" id="prize2" class="form-control mb-2">
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">ปิด</button>
+                    <button class="btn btn-success" onclick="checkWinners()">ตรวจสอบ</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal รายละเอียดผู้ซื้อ -->
+    <div class="modal fade" id="detailModal" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">รายละเอียดการซื้อ</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body" id="buyerDetails"></div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ปิด</button>
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">ปิด</button>
                 </div>
             </div>
         </div>
@@ -78,7 +101,7 @@
         function renderLotteries() {
             let list = document.getElementById("lotteryList");
             list.innerHTML = "";
-            currentLotteries.forEach((lottery, index) => {
+            currentLotteries.forEach(lottery => {
                 list.innerHTML += `<li class="list-group-item">${lottery.number} - ${lottery.amount} บาท</li>`;
             });
         }
@@ -90,13 +113,13 @@
                 return;
             }
 
-            let buyer = {
+            buyers.push({
                 id: Date.now(),
                 name,
                 lotteries: currentLotteries,
                 date: new Date().toLocaleDateString()
-            };
-            buyers.push(buyer);
+            });
+
             localStorage.setItem("buyers", JSON.stringify(buyers));
             loadBuyers();
             bootstrap.Modal.getInstance(document.getElementById("buyerModal")).hide();
@@ -119,13 +142,34 @@
 
         function showDetails(id) {
             let buyer = buyers.find(b => b.id === id);
-            let details = `<h5>${buyer.name} (${buyer.date})</h5>`;
-            details += `<ul class="list-group">`;
+            let details = `<h5>${buyer.name} (${buyer.date})</h5><ul class="list-group">`;
             buyer.lotteries.forEach(l => {
                 details += `<li class="list-group-item">${l.number} - ${l.amount} บาท (${l.time})</li>`;
             });
             details += `</ul>`;
             document.getElementById("buyerDetails").innerHTML = details;
+            new bootstrap.Modal(document.getElementById("detailModal")).show();
+        }
+
+        function openResultModal() {
+            new bootstrap.Modal(document.getElementById("resultModal")).show();
+        }
+
+        function checkWinners() {
+            let prize3 = document.getElementById("prize3").value;
+            let prize2 = document.getElementById("prize2").value;
+            let resultText = "<h5>ผลการตรวจสอบ</h5><ul class='list-group'>";
+
+            buyers.forEach(buyer => {
+                let win = buyer.lotteries.map(l => {
+                    let icon = (l.number === prize3 || l.number === prize2) ? "✅" : "❌";
+                    return `<li class='list-group-item'>${l.number} - ${l.amount} บาท ${icon}</li>`;
+                }).join("");
+                resultText += `<li class='list-group-item'><b>${buyer.name}</b> (${buyer.date})<ul>${win}</ul></li>`;
+            });
+
+            resultText += "</ul>";
+            document.getElementById("buyerDetails").innerHTML = resultText;
             new bootstrap.Modal(document.getElementById("detailModal")).show();
         }
 
