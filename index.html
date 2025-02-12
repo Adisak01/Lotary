@@ -9,31 +9,30 @@
   <style>
     body {
       background: linear-gradient(to right, #ff7a99, #ff7f50);
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
       overflow: hidden;
-      font-family: 'Arial', sans-serif;
-      margin: 0;
     }
 
-    .card {
+    .container {
       text-align: center;
-      position: relative;
-      padding: 40px;
-      background: #fff;
+      padding: 50px;
+      background-color: white;
       border-radius: 20px;
       box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
-      width: 350px;
-      overflow: hidden;
-      z-index: 10;
+      width: 400px;
     }
 
-    .card h1 {
-      color: #ff4b6d;
-      font-size: 40px;
+    .card-header {
+      font-size: 36px;
       font-weight: bold;
+      color: #ff4b6d;
+      margin-bottom: 20px;
     }
 
     .button {
@@ -41,10 +40,9 @@
       font-size: 18px;
       cursor: pointer;
       border-radius: 30px;
-      border: none;
-      transition: all 0.3s ease;
-      margin-top: 20px;
       width: 100%;
+      margin-top: 20px;
+      transition: all 0.3s ease;
     }
 
     .button-love {
@@ -115,7 +113,7 @@
       border-bottom: 50px solid #ff4b6d;
       margin: 20px auto;
       position: absolute;
-      top: 10%;
+      top: 30%;
       left: 50%;
       transform: translateX(-50%);
       transition: all 1s ease;
@@ -129,24 +127,17 @@
       border-radius: 15px 15px 0 0;
     }
 
-    .heart-animation {
+    .envelope.open::after {
+      content: "";
+      width: 0;
+      height: 0;
+      border-left: 50px solid transparent;
+      border-right: 50px solid transparent;
+      border-top: 50px solid #ff4b6d;
       position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      animation: heartSpread 3s forwards;
-      display: none;
-    }
-
-    @keyframes heartSpread {
-      0% {
-        transform: translate(-50%, -50%) scale(0);
-        opacity: 1;
-      }
-      100% {
-        transform: translate(-50%, -50%) scale(5);
-        opacity: 0;
-      }
+      top: -30px;
+      left: 0;
+      transform: translateX(-50%);
     }
 
     .gif {
@@ -164,21 +155,22 @@
       50% { transform: translateY(-20px); }
       100% { transform: translateY(0); }
     }
+
   </style>
 </head>
 <body>
 
-  <div class="card">
-    <h1>การ์ดวาเลนไทน์</h1>
-    <div class="buttons">
-      <button class="btn button button-love" id="loveBtn">รัก</button>
-      <button class="btn button button-no-love" id="noLoveBtn">ไม่รัก</button>
+  <div class="container">
+    <div class="card-header">
+      การ์ดวาเลนไทน์
     </div>
-    <div class="heart" id="heart">❤️</div>
-    <div class="message" id="message">พี่ก็รักนู๋ค้าบเบบี๋</div>
+    <button class="btn button button-love" id="loveBtn">รัก</button>
+    <button class="btn button button-no-love" id="noLoveBtn">ไม่รัก</button>
     <div class="envelope" id="envelope"></div>
-    <div class="heart-animation" id="heartAnimation"></div>
+    <div class="message" id="message">พี่ก็รักนู๋ค้าบเบบี๋</div>
     <img src="https://media.giphy.com/media/3oEduXh7mfZpVp1J2M/giphy.gif" alt="sticker" class="gif" id="gifSticker">
+
+    <div class="heart" id="heart">❤️</div>
   </div>
 
   <!-- เพิ่ม Bootstrap และ JavaScript -->
@@ -190,7 +182,6 @@
     const heart = document.getElementById('heart');
     const message = document.getElementById('message');
     const envelope = document.getElementById('envelope');
-    const heartAnimation = document.getElementById('heartAnimation');
     const gifSticker = document.getElementById('gifSticker');
 
     loveBtn.addEventListener('click', () => {
@@ -198,7 +189,6 @@
       envelope.classList.add('open');
       setTimeout(() => {
         message.style.display = 'block';
-        heartAnimation.style.display = 'block';
         gifSticker.style.display = 'block';
       }, 1000);
     });
@@ -217,23 +207,6 @@
     loveBtn.addEventListener('mouseout', () => {
       loveBtn.style.transform = 'scale(1)';
     });
-
-    // Heart animation
-    function generateHearts() {
-      for (let i = 0; i < 50; i++) {
-        const heartElem = document.createElement('span');
-        heartElem.textContent = '❤️';
-        heartElem.style.position = 'absolute';
-        heartElem.style.left = `${Math.random() * 100}%`;
-        heartElem.style.top = `${Math.random() * 100}%`;
-        heartElem.style.fontSize = `${Math.random() * 20 + 15}px`;
-        heartElem.style.animation = `heartAnimation 2s ease-out ${Math.random() * 3}s infinite`;
-        document.body.appendChild(heartElem);
-      }
-    }
-
-    generateHearts();
-
   </script>
 
 </body>
