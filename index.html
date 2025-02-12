@@ -7,12 +7,14 @@
   <style>
     body {
       font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+      overflow: hidden; /* ปิดสกอ */
       background: linear-gradient(to right, #ff7e5f, #feb47b); /* พื้นหลังสวยๆ */
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
-      margin: 0;
     }
     .chess-board {
       display: grid;
@@ -22,6 +24,7 @@
       border: 4px solid #333;
       background-color: #d18b47;
       box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2); /* เงาบอร์ดหมากรุก */
+      position: relative;
     }
     .chess-cell {
       width: 80px;
@@ -59,6 +62,7 @@
       background-color: rgba(255, 255, 255, 0.7);
       padding: 10px;
       border-radius: 5px;
+      z-index: 100;
     }
     .message {
       font-size: 20px;
@@ -71,6 +75,7 @@
       left: 50%;
       transform: translateX(-50%);
       display: none;
+      z-index: 100;
     }
   </style>
 </head>
@@ -120,6 +125,8 @@
             const pieceElement = document.createElement('div');
             pieceElement.classList.add('chess-piece');
             pieceElement.textContent = piece;
+            pieceElement.setAttribute('draggable', 'true'); // ทำให้หมากรุกลากได้
+            pieceElement.addEventListener('dragstart', (e) => onDragStart(e, row, col));
             cell.appendChild(pieceElement);
           }
 
@@ -128,39 +135,40 @@
       }
     }
 
-    function handleClick(cell) {
-      const row = parseInt(cell.dataset.row);
-      const col = parseInt(cell.dataset.col);
-      const piece = boardState[row][col];
+    function onDragStart(e, row, col) {
+      selectedPiece = { row, col };
+      e.dataTransfer.setData('text', `${row}-${col}`); // ส่งข้อมูลตำแหน่งเพื่อให้สามารถใช้ได้ตอนปล่อย
+    }
 
-      // If a piece is selected, move it
-      if (selectedPiece) {
-        if (isValidMove(selectedPiece, row, col)) {
-          movePiece(selectedPiece, row, col);
-          selectedPiece = null;
-          toggleTurn();
-        } else {
-          selectedPiece = null;
-        }
-      } else if (piece && (turn === 'White' && piece.toUpperCase() === piece || turn === 'Black' && piece.toLowerCase() === piece)) {
-        selectedPiece = { row, col, piece };
-        cell.classList.add('active');
+    function onDrop(e) {
+      e.preventDefault();
+      const data = e.dataTransfer.getData('text');
+      const [oldRow, oldCol] = data.split('-').map(Number);
+      const targetCell = e.target.closest('.chess-cell');
+      const row = parseInt(targetCell.dataset.row);
+      const col = parseInt(targetCell.dataset.col);
+      
+      if (isValidMove(oldRow, oldCol, row, col)) {
+        movePiece(oldRow, oldCol, row, col);
+        toggleTurn();
       }
     }
 
-    function isValidMove(piece, row, col) {
-      // Here you should implement piece movement logic based on chess rules
-      // This is a simplified check, just to make it interactive
+    function onDragOver(e) {
+      e.preventDefault();
+    }
+
+    function isValidMove(oldRow, oldCol, row, col) {
+      // กฎการเคลื่อนที่ของหมากรุก
       return true;
     }
 
-    function movePiece(piece, row, col) {
-      const oldRow = piece.row;
-      const oldCol = piece.col;
-      boardState[row][col] = piece.piece;
+    function movePiece(oldRow, oldCol, row, col) {
+      const piece = boardState[oldRow][oldCol];
+      boardState[row][col] = piece;
       boardState[oldRow][oldCol] = null;
 
-      // Update the visual board
+      // Update visual board
       const fromCell = board.querySelector(`[data-row="${oldRow}"][data-col="${oldCol}"]`);
       const toCell = board.querySelector(`[data-row="${row}"][data-col="${col}"]`);
       const pieceElement = fromCell.querySelector('.chess-piece');
@@ -177,21 +185,19 @@
     }
 
     function checkGameOver() {
-      // Simple win condition check (just as an example)
+      // เพิ่มกฎการชนะ
       if (!boardState.some(row => row.includes('♔'))) {
-        message.textContent = 'White wins!';
+        message.textContent = 'Black wins!';
         message.style.display = 'block';
       } else if (!boardState.some(row => row.includes('♚'))) {
-        message.textContent = 'Black wins!';
+        message.textContent = 'White wins!';
         message.style.display = 'block';
       }
     }
 
-    // Event listeners for handling cell clicks
-    board.addEventListener('click', (e) => {
-      const cell = e.target.closest('.chess-cell');
-      if (cell) handleClick(cell);
-    });
+    // Event listeners for handling cell drops and drag over
+    board.addEventListener('dragover', onDragOver);
+    board.addEventListener('drop', onDrop);
 
     // Initialize the board
     initBoard();
