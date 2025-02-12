@@ -3,204 +3,226 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>เกมหมากรุก</title>
+  <title>การ์ดวาเลนไทน์</title>
+  <!-- เพิ่ม Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEJ06R13K/JrFgr3mfOU8w9wdHqAFz9mcdDmrkA1G/xT2V7D9F9ZbZTqOf1iM" crossorigin="anonymous">
   <style>
     body {
-      font-family: 'Arial', sans-serif;
-      margin: 0;
-      padding: 0;
-      overflow: hidden; /* ปิดสกอ */
-      background: linear-gradient(to right, #ff7e5f, #feb47b); /* พื้นหลังสวยๆ */
+      background: #f8e1e1;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
+      overflow: hidden;
+      font-family: 'Arial', sans-serif;
+      margin: 0;
     }
-    .chess-board {
-      display: grid;
-      grid-template-columns: repeat(8, 80px);
-      grid-template-rows: repeat(8, 80px);
-      gap: 0;
-      border: 4px solid #333;
-      background-color: #d18b47;
-      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2); /* เงาบอร์ดหมากรุก */
+
+    .card {
+      text-align: center;
       position: relative;
+      padding: 30px;
+      background: #fff;
+      border-radius: 15px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      width: 350px;
     }
-    .chess-cell {
-      width: 80px;
-      height: 80px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background-color: #f0d9b5;
-      transition: background-color 0.3s;
+
+    .card h1 {
+      color: #ff4b6d;
+      font-size: 32px;
+    }
+
+    .buttons {
+      margin-top: 30px;
+    }
+
+    .button {
+      padding: 15px 30px;
+      font-size: 18px;
       cursor: pointer;
-      border: 1px solid #333; /* เส้นตารางสวยๆ */
+      border-radius: 25px;
+      border: none;
+      margin: 10px;
+      transition: transform 0.3s;
     }
-    .chess-cell:nth-child(even) {
-      background-color: #b58863;
+
+    .button-love {
+      background-color: #ff78a6;
     }
-    .chess-piece {
-      font-size: 2em;
-      cursor: pointer;
-      transition: transform 0.3s ease;
+
+    .button:hover {
+      transform: scale(1.1);
     }
-    .chess-piece:hover {
-      transform: scale(1.2);
+
+    .heart {
+      font-size: 3em;
+      color: #ff4b6d;
+      margin-top: 20px;
+      display: none;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      animation: heartAnimation 1.5s infinite ease-in-out;
     }
-    .active {
-      background-color: rgba(255, 255, 255, 0.3);
+
+    @keyframes heartAnimation {
+      0% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+      }
+      50% {
+        transform: translate(-50%, -50%) scale(1.2);
+        opacity: 0.5;
+      }
+      100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+      }
     }
-    .turn-indicator {
-      position: fixed;
-      top: 20px;
+
+    .message {
+      font-size: 20px;
+      color: #ff4b6d;
+      display: none;
+      position: absolute;
+      bottom: 20px;
       left: 50%;
       transform: translateX(-50%);
-      font-size: 24px;
-      color: #333;
       font-weight: bold;
       background-color: rgba(255, 255, 255, 0.7);
       padding: 10px;
-      border-radius: 5px;
-      z-index: 100;
+      border-radius: 20px;
     }
-    .message {
-      font-size: 20px;
-      color: #fff;
-      background-color: #333;
-      padding: 10px;
-      border-radius: 5px;
-      position: fixed;
-      top: 100px;
+
+    .envelope {
+      width: 0;
+      height: 0;
+      border-left: 50px solid transparent;
+      border-right: 50px solid transparent;
+      border-bottom: 50px solid #ff4b6d;
+      margin: 20px auto;
+      position: absolute;
+      top: 10%;
       left: 50%;
       transform: translateX(-50%);
+      transition: all 1s ease;
+    }
+
+    .envelope.open {
+      width: 150px;
+      height: 100px;
+      border-bottom: none;
+      background-color: #ff4b6d;
+      border-radius: 15px 15px 0 0;
+    }
+
+    .heart-animation {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      animation: heartSpread 3s forwards;
       display: none;
-      z-index: 100;
+    }
+
+    @keyframes heartSpread {
+      0% {
+        transform: translate(-50%, -50%) scale(0);
+        opacity: 1;
+      }
+      100% {
+        transform: translate(-50%, -50%) scale(5);
+        opacity: 0;
+      }
+    }
+
+    .gif {
+      position: absolute;
+      top: 10%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 150px;
+      animation: gifAnimation 3s infinite;
+      display: none;
+    }
+
+    @keyframes gifAnimation {
+      0% { transform: translateY(0); }
+      50% { transform: translateY(-20px); }
+      100% { transform: translateY(0); }
     }
   </style>
 </head>
 <body>
 
-  <div class="turn-indicator" id="turnIndicator">Turn: White</div>
-  <div class="chess-board" id="chessBoard"></div>
-  <div class="message" id="message">Winner!</div>
+  <div class="card">
+    <h1>การ์ดวาเลนไทน์</h1>
+    <div class="buttons">
+      <button class="btn btn-pink button button-love" id="loveBtn">รัก</button>
+      <button class="btn btn-outline-danger button" id="noLoveBtn">ไม่รัก</button>
+    </div>
+    <div class="heart" id="heart">❤️</div>
+    <div class="message" id="message">พี่ก็รักนู๋ค้าบเบบี๋</div>
+    <div class="envelope" id="envelope"></div>
+    <div class="heart-animation" id="heartAnimation"></div>
+    <img src="https://media.giphy.com/media/3oEduXh7mfZpVp1J2M/giphy.gif" alt="sticker" class="gif" id="gifSticker">
+  </div>
 
+  <!-- เพิ่ม Bootstrap และ JavaScript -->
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
   <script>
-    const board = document.getElementById('chessBoard');
-    const turnIndicator = document.getElementById('turnIndicator');
+    const loveBtn = document.getElementById('loveBtn');
+    const noLoveBtn = document.getElementById('noLoveBtn');
+    const heart = document.getElementById('heart');
     const message = document.getElementById('message');
-    const size = 8;
-    let turn = 'White';
-    let selectedPiece = null;
-    let boardState = [];
+    const envelope = document.getElementById('envelope');
+    const heartAnimation = document.getElementById('heartAnimation');
+    const gifSticker = document.getElementById('gifSticker');
 
-    // Initialize board state
-    function initBoard() {
-      boardState = Array(size).fill().map(() => Array(size).fill(null));
-
-      // Initial positions for pieces using Unicode characters
-      const pieces = [
-        ['♖', '♘', '♗', '♕', '♔', '♗', '♘', '♖'],
-        ['♙', '♙', '♙', '♙', '♙', '♙', '♙', '♙'],
-        [null, null, null, null, null, null, null, null],
-        [null, null, null, null, null, null, null, null],
-        [null, null, null, null, null, null, null, null],
-        [null, null, null, null, null, null, null, null],
-        ['♟', '♟', '♟', '♟', '♟', '♟', '♟', '♟'],
-        ['♖', '♘', '♗', '♕', '♔', '♗', '♘', '♖']
-      ];
-
-      // Draw the board
-      board.innerHTML = '';
-      for (let row = 0; row < size; row++) {
-        for (let col = 0; col < size; col++) {
-          const cell = document.createElement('div');
-          cell.classList.add('chess-cell');
-          cell.dataset.row = row;
-          cell.dataset.col = col;
-
-          // Add piece to cell if exists
-          const piece = pieces[row][col];
-          if (piece) {
-            const pieceElement = document.createElement('div');
-            pieceElement.classList.add('chess-piece');
-            pieceElement.textContent = piece;
-            pieceElement.setAttribute('draggable', 'true'); // ทำให้หมากรุกลากได้
-            pieceElement.addEventListener('dragstart', (e) => onDragStart(e, row, col));
-            cell.appendChild(pieceElement);
-          }
-
-          board.appendChild(cell);
-        }
-      }
-    }
-
-    function onDragStart(e, row, col) {
-      selectedPiece = { row, col };
-      e.dataTransfer.setData('text', `${row}-${col}`); // ส่งข้อมูลตำแหน่งเพื่อให้สามารถใช้ได้ตอนปล่อย
-    }
-
-    function onDrop(e) {
-      e.preventDefault();
-      const data = e.dataTransfer.getData('text');
-      const [oldRow, oldCol] = data.split('-').map(Number);
-      const targetCell = e.target.closest('.chess-cell');
-      const row = parseInt(targetCell.dataset.row);
-      const col = parseInt(targetCell.dataset.col);
-      
-      if (isValidMove(oldRow, oldCol, row, col)) {
-        movePiece(oldRow, oldCol, row, col);
-        toggleTurn();
-      }
-    }
-
-    function onDragOver(e) {
-      e.preventDefault();
-    }
-
-    function isValidMove(oldRow, oldCol, row, col) {
-      // กฎการเคลื่อนที่ของหมากรุก
-      return true;
-    }
-
-    function movePiece(oldRow, oldCol, row, col) {
-      const piece = boardState[oldRow][oldCol];
-      boardState[row][col] = piece;
-      boardState[oldRow][oldCol] = null;
-
-      // Update visual board
-      const fromCell = board.querySelector(`[data-row="${oldRow}"][data-col="${oldCol}"]`);
-      const toCell = board.querySelector(`[data-row="${row}"][data-col="${col}"]`);
-      const pieceElement = fromCell.querySelector('.chess-piece');
-
-      toCell.appendChild(pieceElement);
-      fromCell.innerHTML = '';
-
-      checkGameOver();
-    }
-
-    function toggleTurn() {
-      turn = turn === 'White' ? 'Black' : 'White';
-      turnIndicator.textContent = `Turn: ${turn}`;
-    }
-
-    function checkGameOver() {
-      // เพิ่มกฎการชนะ
-      if (!boardState.some(row => row.includes('♔'))) {
-        message.textContent = 'Black wins!';
+    loveBtn.addEventListener('click', () => {
+      heart.style.display = 'none';
+      envelope.classList.add('open');
+      setTimeout(() => {
         message.style.display = 'block';
-      } else if (!boardState.some(row => row.includes('♚'))) {
-        message.textContent = 'White wins!';
-        message.style.display = 'block';
+        heartAnimation.style.display = 'block';
+        gifSticker.style.display = 'block';
+      }, 1000);
+    });
+
+    noLoveBtn.addEventListener('click', () => {
+      noLoveBtn.style.transform = 'scale(0.7)';
+      setTimeout(() => {
+        noLoveBtn.style.transform = 'scale(1)';
+      }, 500);
+    });
+
+    loveBtn.addEventListener('mouseover', () => {
+      loveBtn.style.transform = 'scale(1.2)';
+    });
+
+    loveBtn.addEventListener('mouseout', () => {
+      loveBtn.style.transform = 'scale(1)';
+    });
+
+    // Heart animation
+    function generateHearts() {
+      for (let i = 0; i < 50; i++) {
+        const heartElem = document.createElement('span');
+        heartElem.textContent = '❤️';
+        heartElem.style.position = 'absolute';
+        heartElem.style.left = `${Math.random() * 100}%`;
+        heartElem.style.top = `${Math.random() * 100}%`;
+        heartElem.style.fontSize = `${Math.random() * 20 + 15}px`;
+        heartElem.style.animation = `heartAnimation 2s ease-out ${Math.random() * 3}s infinite`;
+        document.body.appendChild(heartElem);
       }
     }
 
-    // Event listeners for handling cell drops and drag over
-    board.addEventListener('dragover', onDragOver);
-    board.addEventListener('drop', onDrop);
+    generateHearts();
 
-    // Initialize the board
-    initBoard();
   </script>
 
 </body>
