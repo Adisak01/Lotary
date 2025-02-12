@@ -8,7 +8,7 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEJ06R13K/JrFgr3mfOU8w9wdHqAFz9mcdDmrkA1G/xT2V7D9F9ZbZTqOf1iM" crossorigin="anonymous">
   <style>
     body {
-      background: #f8e1e1;
+      background: linear-gradient(to right, #ff7a99, #ff7f50);
       display: flex;
       justify-content: center;
       align-items: center;
@@ -21,69 +21,79 @@
     .card {
       text-align: center;
       position: relative;
-      padding: 30px;
+      padding: 40px;
       background: #fff;
-      border-radius: 15px;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      border-radius: 20px;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
       width: 350px;
+      overflow: hidden;
+      z-index: 10;
     }
 
     .card h1 {
       color: #ff4b6d;
-      font-size: 32px;
-    }
-
-    .buttons {
-      margin-top: 30px;
+      font-size: 40px;
+      font-weight: bold;
     }
 
     .button {
-      padding: 15px 30px;
+      padding: 15px 40px;
       font-size: 18px;
       cursor: pointer;
-      border-radius: 25px;
+      border-radius: 30px;
       border: none;
-      margin: 10px;
-      transition: transform 0.3s;
+      transition: all 0.3s ease;
+      margin-top: 20px;
+      width: 100%;
     }
 
     .button-love {
       background-color: #ff78a6;
+      color: white;
+      border: none;
     }
 
-    .button:hover {
+    .button-love:hover {
       transform: scale(1.1);
+      background-color: #ff5f88;
+    }
+
+    .button-no-love {
+      background-color: #f2f2f2;
+      color: #ff4b6d;
+      border: 2px solid #ff4b6d;
+    }
+
+    .button-no-love:hover {
+      transform: scale(1.1);
+      background-color: #f1f1f1;
     }
 
     .heart {
-      font-size: 3em;
+      font-size: 4em;
       color: #ff4b6d;
       margin-top: 20px;
-      display: none;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
       animation: heartAnimation 1.5s infinite ease-in-out;
+      display: none;
     }
 
     @keyframes heartAnimation {
       0% {
-        transform: translate(-50%, -50%) scale(1);
+        transform: scale(1);
         opacity: 1;
       }
       50% {
-        transform: translate(-50%, -50%) scale(1.2);
+        transform: scale(1.2);
         opacity: 0.5;
       }
       100% {
-        transform: translate(-50%, -50%) scale(1);
+        transform: scale(1);
         opacity: 1;
       }
     }
 
     .message {
-      font-size: 20px;
+      font-size: 24px;
       color: #ff4b6d;
       display: none;
       position: absolute;
@@ -94,6 +104,7 @@
       background-color: rgba(255, 255, 255, 0.7);
       padding: 10px;
       border-radius: 20px;
+      width: 80%;
     }
 
     .envelope {
@@ -160,8 +171,8 @@
   <div class="card">
     <h1>การ์ดวาเลนไทน์</h1>
     <div class="buttons">
-      <button class="btn btn-pink button button-love" id="loveBtn">รัก</button>
-      <button class="btn btn-outline-danger button" id="noLoveBtn">ไม่รัก</button>
+      <button class="btn button button-love" id="loveBtn">รัก</button>
+      <button class="btn button button-no-love" id="noLoveBtn">ไม่รัก</button>
     </div>
     <div class="heart" id="heart">❤️</div>
     <div class="message" id="message">พี่ก็รักนู๋ค้าบเบบี๋</div>
@@ -200,7 +211,7 @@
     });
 
     loveBtn.addEventListener('mouseover', () => {
-      loveBtn.style.transform = 'scale(1.2)';
+      loveBtn.style.transform = 'scale(1.1)';
     });
 
     loveBtn.addEventListener('mouseout', () => {
