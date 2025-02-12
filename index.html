@@ -30,13 +30,13 @@
       align-items: center;
       background-color: #f0d9b5;
       transition: background-color 0.3s;
+      cursor: pointer;
     }
     .chess-cell:nth-child(even) {
       background-color: #b58863;
     }
     .chess-piece {
-      width: 60%;
-      height: 60%;
+      font-size: 2em;
       cursor: pointer;
       transition: transform 0.3s ease;
     }
@@ -87,16 +87,16 @@
     function initBoard() {
       boardState = Array(size).fill().map(() => Array(size).fill(null));
 
-      // Initial positions for pieces
+      // Initial positions for pieces using Unicode characters
       const pieces = [
-        ['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'],
-        ['P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'],
+        ['♖', '♘', '♗', '♕', '♔', '♗', '♘', '♖'],
+        ['♙', '♙', '♙', '♙', '♙', '♙', '♙', '♙'],
         [null, null, null, null, null, null, null, null],
         [null, null, null, null, null, null, null, null],
         [null, null, null, null, null, null, null, null],
         [null, null, null, null, null, null, null, null],
-        ['p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'],
-        ['r', 'n', 'b', 'q', 'k', 'b', 'n', 'r']
+        ['♟', '♟', '♟', '♟', '♟', '♟', '♟', '♟'],
+        ['♖', '♘', '♗', '♕', '♔', '♗', '♘', '♖']
       ];
 
       // Draw the board
@@ -111,33 +111,15 @@
           // Add piece to cell if exists
           const piece = pieces[row][col];
           if (piece) {
-            const pieceElement = document.createElement('img');
-            pieceElement.src = `https://upload.wikimedia.org/wikipedia/commons/${getPieceImage(piece)}`;
+            const pieceElement = document.createElement('div');
             pieceElement.classList.add('chess-piece');
+            pieceElement.textContent = piece;
             cell.appendChild(pieceElement);
           }
 
           board.appendChild(cell);
         }
       }
-    }
-
-    function getPieceImage(piece) {
-      const pieceMap = {
-        'P': '5/5/Pe5.svg',
-        'p': '5/5/pe5.svg',
-        'R': '5/5/Re5.svg',
-        'r': '5/5/re5.svg',
-        'N': '5/5/Ne5.svg',
-        'n': '5/5/ne5.svg',
-        'B': '5/5/Be5.svg',
-        'b': '5/5/be5.svg',
-        'Q': '5/5/Qe5.svg',
-        'q': '5/5/qe5.svg',
-        'K': '5/5/Ke5.svg',
-        'k': '5/5/ke5.svg'
-      };
-      return pieceMap[piece] || '';
     }
 
     function handleClick(cell) {
@@ -190,10 +172,10 @@
 
     function checkGameOver() {
       // Simple win condition check (just as an example)
-      if (!boardState.some(row => row.includes('k'))) {
+      if (!boardState.some(row => row.includes('♔'))) {
         message.textContent = 'White wins!';
         message.style.display = 'block';
-      } else if (!boardState.some(row => row.includes('K'))) {
+      } else if (!boardState.some(row => row.includes('♚'))) {
         message.textContent = 'Black wins!';
         message.style.display = 'block';
       }
@@ -208,6 +190,6 @@
     // Initialize the board
     initBoard();
   </script>
-  
+
 </body>
 </html>
