@@ -28,7 +28,7 @@
         <!-- งบทริป -->
         <div class="mb-3">
             <label class="form-label">งบประมาณทริป (THB):</label>
-            <input type="number" id="budgetInput" class="form-control" placeholder="ใส่งบประมาณ">
+            <input type="number" id="budgetInput" class="form-control">
         </div>
 
         <!-- ตารางกิจกรรม -->
@@ -67,20 +67,20 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            loadBudget();
-            loadActivities();
-            loadExpenses();
+            loadData();
         });
 
-        let budget = localStorage.getItem("budget") || 0;
-        document.getElementById("budgetInput").value = budget;
-        document.getElementById("budgetInput").addEventListener("input", updateBudget);
-
-        function updateBudget() {
-            budget = document.getElementById("budgetInput").value;
-            localStorage.setItem("budget", budget);
+        function loadData() {
+            document.getElementById("budgetInput").value = localStorage.getItem("budget") || 0;
+            loadActivities();
+            loadExpenses();
             updateSummary();
         }
+
+        document.getElementById("budgetInput").addEventListener("input", function () {
+            localStorage.setItem("budget", this.value);
+            updateSummary();
+        });
 
         function addActivity() {
             let time = prompt("กรอกเวลา (เช่น 10:00)");
@@ -142,6 +142,7 @@
         }
 
         function updateSummary() {
+            let budget = parseFloat(localStorage.getItem("budget")) || 0;
             let expenses = JSON.parse(localStorage.getItem("expenses")) || [];
             let totalExpenses = expenses.reduce((sum, item) => sum + item.amount, 0);
             let remainingBudget = budget - totalExpenses;
