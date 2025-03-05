@@ -1,213 +1,154 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>การ์ดวาเลนไทน์</title>
-  <!-- เพิ่ม Bootstrap -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEJ06R13K/JrFgr3mfOU8w9wdHqAFz9mcdDmrkA1G/xT2V7D9F9ZbZTqOf1iM" crossorigin="anonymous">
-  <style>
-    body {
-      background: linear-gradient(to right, #ff7a99, #ff7f50);
-      font-family: 'Arial', sans-serif;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      overflow: hidden;
-    }
-
-    .container {
-      text-align: center;
-      padding: 50px;
-      background-color: white;
-      border-radius: 20px;
-      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
-      width: 400px;
-    }
-
-    .card-header {
-      font-size: 36px;
-      font-weight: bold;
-      color: #ff4b6d;
-      margin-bottom: 20px;
-    }
-
-    .button {
-      padding: 15px 40px;
-      font-size: 18px;
-      cursor: pointer;
-      border-radius: 30px;
-      width: 100%;
-      margin-top: 20px;
-      transition: all 0.3s ease;
-    }
-
-    .button-love {
-      background-color: #ff78a6;
-      color: white;
-      border: none;
-    }
-
-    .button-love:hover {
-      transform: scale(1.1);
-      background-color: #ff5f88;
-    }
-
-    .button-no-love {
-      background-color: #f2f2f2;
-      color: #ff4b6d;
-      border: 2px solid #ff4b6d;
-    }
-
-    .button-no-love:hover {
-      transform: scale(1.1);
-      background-color: #f1f1f1;
-    }
-
-    .heart {
-      font-size: 4em;
-      color: #ff4b6d;
-      margin-top: 20px;
-      animation: heartAnimation 1.5s infinite ease-in-out;
-      display: none;
-    }
-
-    @keyframes heartAnimation {
-      0% {
-        transform: scale(1);
-        opacity: 1;
-      }
-      50% {
-        transform: scale(1.2);
-        opacity: 0.5;
-      }
-      100% {
-        transform: scale(1);
-        opacity: 1;
-      }
-    }
-
-    .message {
-      font-size: 24px;
-      color: #ff4b6d;
-      display: none;
-      position: absolute;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-weight: bold;
-      background-color: rgba(255, 255, 255, 0.7);
-      padding: 10px;
-      border-radius: 20px;
-      width: 80%;
-    }
-
-    .envelope {
-      width: 0;
-      height: 0;
-      border-left: 50px solid transparent;
-      border-right: 50px solid transparent;
-      border-bottom: 50px solid #ff4b6d;
-      margin: 20px auto;
-      position: absolute;
-      top: 30%;
-      left: 50%;
-      transform: translateX(-50%);
-      transition: all 1s ease;
-    }
-
-    .envelope.open {
-      width: 150px;
-      height: 100px;
-      border-bottom: none;
-      background-color: #ff4b6d;
-      border-radius: 15px 15px 0 0;
-    }
-
-    .envelope.open::after {
-      content: "";
-      width: 0;
-      height: 0;
-      border-left: 50px solid transparent;
-      border-right: 50px solid transparent;
-      border-top: 50px solid #ff4b6d;
-      position: absolute;
-      top: -30px;
-      left: 0;
-      transform: translateX(-50%);
-    }
-
-    .gif {
-      position: absolute;
-      top: 10%;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 150px;
-      animation: gifAnimation 3s infinite;
-      display: none;
-    }
-
-    @keyframes gifAnimation {
-      0% { transform: translateY(0); }
-      50% { transform: translateY(-20px); }
-      100% { transform: translateY(0); }
-    }
-
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>วางแผนทริป</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .container {
+            max-width: 800px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #007bff;
+        }
+    </style>
 </head>
 <body>
+    <div class="container mt-4">
+        <h1 class="text-center">วางแผนทริป</h1>
 
-  <div class="container">
-    <div class="card-header">
-      การ์ดวาเลนไทน์
+        <!-- งบทริป -->
+        <div class="mb-3">
+            <label class="form-label">งบประมาณทริป (THB):</label>
+            <input type="number" id="budgetInput" class="form-control" placeholder="ใส่งบประมาณ">
+        </div>
+
+        <!-- ตารางกิจกรรม -->
+        <h3>กิจกรรม</h3>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>เวลา</th>
+                    <th>กิจกรรม</th>
+                    <th>การจัดการ</th>
+                </tr>
+            </thead>
+            <tbody id="activityTable"></tbody>
+        </table>
+        <button class="btn btn-primary" onclick="addActivity()">เพิ่มกิจกรรม</button>
+
+        <!-- ตารางค่าใช้จ่าย -->
+        <h3 class="mt-4">ค่าใช้จ่าย</h3>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>รายการ</th>
+                    <th>จำนวนเงิน (THB)</th>
+                    <th>การจัดการ</th>
+                </tr>
+            </thead>
+            <tbody id="expenseTable"></tbody>
+        </table>
+        <button class="btn btn-danger" onclick="addExpense()">เพิ่มค่าใช้จ่าย</button>
+
+        <!-- สรุปผล -->
+        <h3 class="mt-4">สรุป</h3>
+        <p>ใช้เงินไปแล้ว: <span id="totalExpenses">0</span> THB</p>
+        <p>งบคงเหลือ: <span id="remainingBudget">0</span> THB</p>
     </div>
-    <button class="btn button button-love" id="loveBtn">รัก</button>
-    <button class="btn button button-no-love" id="noLoveBtn">ไม่รัก</button>
-    <div class="envelope" id="envelope"></div>
-    <div class="message" id="message">พี่ก็รักนู๋ค้าบเบบี๋</div>
-    <img src="https://media.giphy.com/media/3oEduXh7mfZpVp1J2M/giphy.gif" alt="sticker" class="gif" id="gifSticker">
 
-    <div class="heart" id="heart">❤️</div>
-  </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            loadBudget();
+            loadActivities();
+            loadExpenses();
+        });
 
-  <!-- เพิ่ม Bootstrap และ JavaScript -->
-  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
-  <script>
-    const loveBtn = document.getElementById('loveBtn');
-    const noLoveBtn = document.getElementById('noLoveBtn');
-    const heart = document.getElementById('heart');
-    const message = document.getElementById('message');
-    const envelope = document.getElementById('envelope');
-    const gifSticker = document.getElementById('gifSticker');
+        let budget = localStorage.getItem("budget") || 0;
+        document.getElementById("budgetInput").value = budget;
+        document.getElementById("budgetInput").addEventListener("input", updateBudget);
 
-    loveBtn.addEventListener('click', () => {
-      heart.style.display = 'none';
-      envelope.classList.add('open');
-      setTimeout(() => {
-        message.style.display = 'block';
-        gifSticker.style.display = 'block';
-      }, 1000);
-    });
+        function updateBudget() {
+            budget = document.getElementById("budgetInput").value;
+            localStorage.setItem("budget", budget);
+            updateSummary();
+        }
 
-    noLoveBtn.addEventListener('click', () => {
-      noLoveBtn.style.transform = 'scale(0.7)';
-      setTimeout(() => {
-        noLoveBtn.style.transform = 'scale(1)';
-      }, 500);
-    });
+        function addActivity() {
+            let time = prompt("กรอกเวลา (เช่น 10:00)");
+            let activity = prompt("กรอกชื่อกิจกรรม");
+            if (time && activity) {
+                let activities = JSON.parse(localStorage.getItem("activities")) || [];
+                activities.push({ time, activity });
+                localStorage.setItem("activities", JSON.stringify(activities));
+                loadActivities();
+            }
+        }
 
-    loveBtn.addEventListener('mouseover', () => {
-      loveBtn.style.transform = 'scale(1.1)';
-    });
+        function loadActivities() {
+            let table = document.getElementById("activityTable");
+            table.innerHTML = "";
+            let activities = JSON.parse(localStorage.getItem("activities")) || [];
+            activities.forEach((item, index) => {
+                let row = table.insertRow();
+                row.innerHTML = `<td>${item.time}</td><td>${item.activity}</td>
+                    <td><button class="btn btn-sm btn-danger" onclick="deleteActivity(${index})">ลบ</button></td>`;
+            });
+        }
 
-    loveBtn.addEventListener('mouseout', () => {
-      loveBtn.style.transform = 'scale(1)';
-    });
-  </script>
+        function deleteActivity(index) {
+            let activities = JSON.parse(localStorage.getItem("activities")) || [];
+            activities.splice(index, 1);
+            localStorage.setItem("activities", JSON.stringify(activities));
+            loadActivities();
+        }
 
+        function addExpense() {
+            let name = prompt("กรอกชื่อรายการค่าใช้จ่าย");
+            let amount = parseFloat(prompt("กรอกจำนวนเงิน (THB)"));
+            if (name && amount) {
+                let expenses = JSON.parse(localStorage.getItem("expenses")) || [];
+                expenses.push({ name, amount });
+                localStorage.setItem("expenses", JSON.stringify(expenses));
+                loadExpenses();
+            }
+        }
+
+        function loadExpenses() {
+            let table = document.getElementById("expenseTable");
+            table.innerHTML = "";
+            let expenses = JSON.parse(localStorage.getItem("expenses")) || [];
+            expenses.forEach((item, index) => {
+                let row = table.insertRow();
+                row.innerHTML = `<td>${item.name}</td><td>${item.amount} THB</td>
+                    <td><button class="btn btn-sm btn-danger" onclick="deleteExpense(${index})">ลบ</button></td>`;
+            });
+            updateSummary();
+        }
+
+        function deleteExpense(index) {
+            let expenses = JSON.parse(localStorage.getItem("expenses")) || [];
+            expenses.splice(index, 1);
+            localStorage.setItem("expenses", JSON.stringify(expenses));
+            loadExpenses();
+        }
+
+        function updateSummary() {
+            let expenses = JSON.parse(localStorage.getItem("expenses")) || [];
+            let totalExpenses = expenses.reduce((sum, item) => sum + item.amount, 0);
+            let remainingBudget = budget - totalExpenses;
+
+            document.getElementById("totalExpenses").textContent = totalExpenses;
+            document.getElementById("remainingBudget").textContent = remainingBudget;
+        }
+    </script>
 </body>
 </html>
